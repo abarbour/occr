@@ -10,3 +10,5 @@ License: GPL
 Depends: tidyverse
 Encoding: UTF-8
 LazyData: true
+Suggests: testthat,
+    covr
