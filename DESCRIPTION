@@ -4,9 +4,9 @@ Title: Access to some data in the OCCEWEB database
 Version: 0.1.0
 Author: Andrew J Barbour
 Maintainer: AJB <andy.barbour@gmail.com>
-Description: More about what it does (maybe more than one line)
+Description: DD
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: GPL
 Depends: tidyverse
 Encoding: UTF-8
 LazyData: true
