@@ -14,6 +14,7 @@
 
 ## libs
 
+library(maps)
 library(raster)
 library(rgdal)
 library(data.table)
@@ -132,10 +133,11 @@ if (!exists("All.dly") | redo | redo.raw){
 }
 
 redo.quakes <- TRUE
+date.filt1 <- "2015-04-01"
 if (!exists("Eqs") | !exists("eqhull") | redo | redo.quakes){
 	read_csv("anss/anss_catalog_M3.csv", col_names=TRUE) %>%
 		dplyr::mutate(., Date = as.Date(DateTime)) %>%
-		dplyr::filter(., Date >= as.Date("2015-05-01")) -> Eqs
+		dplyr::filter(., Date >= as.Date(date.filt1)) -> Eqs
 	coordinates(Eqs) <- ~ Longitude + Latitude
 	proj4string(Eqs) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 
@@ -179,7 +181,7 @@ dcast(setDT(All.dly), Report.Date ~ API, value.var=c('Volume.BPD'), drop=FALSE, 
 #matplot(Dly.api[,1], Dly.api[,-1], type='l')
 
 events <- as.Date(c('2016-03-27',"2016-09-03",'2016-11-02','2016-11-07'))
-evt.labels <- c("AOI filing requirement begins", expression(bold(M)*5.8), expression(bold(M)*4.5), expression(bold(M)*5.0))
+evt.labels <- c("Daily filing regulation begins", expression(bold(M)*5.8), expression(bold(M)*4.5), expression(bold(M)*5.0))
 
 Dly.api.filt <- filter(Dly.api, Report.Date >= as.Date('2014-01-01'))
 xl <- range(c(Dly.api.filt$Report.Date, events)) + c(-7,7)
@@ -191,116 +193,117 @@ CTY <- function(alph=0.2){
 	#lines(eqhull, lty=2)
 }
 
+FIG <- function(){
+	layout(matrix(c(1,1, 2,2, 3,3, 4,4, 5,6, 7,8, 5,6, 7,8), 4, byrow=FALSE), heights=c(1,1.5,1.5,1))
 
-layout(matrix(c(1,1, 2,2, 3,3, 4,4, 5,6,7,8), 4, byrow=FALSE)) #, heights=c(1,1))
+	par(las=1, cex=0.85)
 
-par(las=1, cex=0.9)
+	par(mar=10*c(0.01,0.01,0.01,0.01), lend='square')
+	defc <- 0.15
+	pltdf <- All.wells.cty
+	pltdf.bb <- bbox(pltdf)
+	cexs <- scale(pltdf$Total.volume.bbl, center=FALSE)+defc
+	cexs2 <- scale(pltdf$Max.volume.bbl, center=FALSE)+defc
+	cexs3 <- scale((10**(Eqs$Magnitude))**(1/2.2), center=FALSE)*defc + defc*1.5
+	cexs3 <- scale(Eqs$Magnitude**3, center=FALSE) - 0.5 + defc
+	bgs <- adjustcolor(cty.pal[((as.numeric(pltdf$County)-1) %% n.cty.pal)+1], alpha=0.5)
+	cols <- ifelse(bgs==defc, NA, "black")
 
-par(mar=10*c(0.01,0.01,0.01,0.01))
-defc <- 0.15
-pltdf <- All.wells.cty
-cexs <- scale(pltdf$Total.volume.bbl, center=FALSE)+defc
-cexs2 <- scale(pltdf$Max.volume.bbl, center=FALSE)+defc
-cexs3 <- scale((10**round(Eqs$Magnitude))**(1/2), center=FALSE)*defc
-bgs <- adjustcolor(cty.pal[((as.numeric(pltdf$County)-1) %% n.cty.pal)+1], alpha=0.5)
-cols <- ifelse(bgs==defc, NA, "black")
+	.plt_main <- function(lbl="", y = pltdf.bb['Lat','max'], ...){
+		pu <- par('usr')
+		x <- mean(pu[1:2])
+		#axis(1, line=-3)
+		#axis(2, line=-3)
+		text(x, y, lbl, font=2, pos=3, ...)
+		maps::map.scale(ratio=FALSE, relwidth=0.191, cex=0.75, tcl=-0.2)
+	}
 
-plot(pltdf, col=NA)
-CTY(0.5)
-plot(pltdf, 
-	bg=bgs, col=cols,
-	pch=22, 
-	add=TRUE)
-mtext("Active Injectors\n(AOIs only)", side=1, adj=0.15, line=-4, font=2)
+	plot(pltdf, col=NA)
+	CTY(0.4)
+	plot(pltdf, 
+		bg=bgs, col=cols,
+		pch=22,
+		cex=6*defc, lwd=0.7, 
+		add=TRUE)
+	.plt_main("Active AOI Injectors filing Daily")
 
-plot(pltdf, col=NA)
-CTY()
-plot(pltdf, 
-	bg=bgs, col=cols,
-	pch=22, 
-	cex=cexs,
-	add=TRUE)
-mtext("Total volume", side=1, adj=0.15, line=-4, font=2)
+	plot(pltdf, col=NA)
+	CTY()
+	plot(pltdf, 
+		bg=bgs, col=cols,
+		pch=22, 
+		cex=cexs, lwd=0.7,
+		add=TRUE)
+	.plt_main("Total volume since first data")
 
-plot(pltdf, col=NA)
-CTY()
-plot(Eqs, 
-	#bg=bgs, col=cols, 
-	pch=1, 
-	cex=cexs3,
-	add=TRUE)
-mtext("ANSS  M>=2, Z<=10", side=1, adj=0.15, line=-4, font=2)
+	plot(pltdf, col=NA)
+	CTY()
+	plot(Eqs, 
+		#bg=bgs, col=cols, 
+		pch=16,
+		col=adjustcolor('black',alpha=0.5),
+		cex=cexs3,
+		add=TRUE)
+	.plt_main(sprintf("ANSS  M>=2, Z<=10, t>=%s", date.filt1))
 
-plot(pltdf, col=NA)
-CTY()
-plot(pltdf, 
-	bg=bgs, col=cols,
-	pch=22, 
-	cex=cexs2,
-	add=TRUE)
-mtext("Peak daily rate", side=1, adj=0.15, line=-4, font=2)
+	plot(pltdf, col=NA)
+	CTY()
+	plot(pltdf, 
+		bg=bgs, col=cols,
+		pch=22, 
+		cex=cexs2, lwd=0.7,
+		add=TRUE)
+	.plt_main("Peak daily rate since first data")
 
-par(mar=c(2,4.5,1,1))
+	par(mar=c(2,4.5,1,1), mgp=c(1.9,0.6,0),tcl=-0.3)
 
-x <- Dly.api.filt[,1]
-Y <- Dly.api.filt[,-1]
-y <- rowSums(Y, na.rm=TRUE)/1e6
-xi <- which(x >= as.Date('2015-05-01')) #events[1])
-m <- lm(y[xi] ~ x[xi])
+	x <- Dly.api.filt[,1]
+	Y <- Dly.api.filt[,-1]
+	y <- rowSums(Y, na.rm=TRUE)/1e6
+	xi <- which(x >= as.Date(date.filt1) & x < as.Date('2016-09-03')) #events[1])
+	m <- lm(y[xi] ~ x[xi])
 
-plot.new()
+	plot.new()
 
-plot(x, y,
-	ylim=c(0, max(y,na.rm=TRUE)),
-	xlim=xl, xaxs='i',
-	type='l',ylab=expression(10^6~~"bbl/dy"))
-abline(v=events, col=Set1[c(2,3,3,3)], lty=c(1,5,5,2))
-stages.st <- as.Date(paste0("2016-",c("03-07","03-29","04-18","05-08")))
-stages.en <- as.Date(paste0("2016-",c("03-28","04-17","05-07","05-28")))
-stg.st <- c(1.8, 1.8*0.75, (1.8*0.75)*0.75, ((1.8*0.75)*0.75)*0.75)
-stg.en <- c(1.8*0.75, (1.8*0.75)*0.75, ((1.8*0.75)*0.75)*0.75, (((1.8*0.75)*0.75)*0.75)*0.75)
-#segments(stages.st, stg.st, stages.en, stg.en, lty=2)
-text(events, 2.7 - 0.1*seq_along(events), evt.labels, col=Set1[c(2,3,3,3)], pos=2, cex=0.9)
-abline(m, col=Set1[1], lty=4)
-text(x[xi][1], 2, sprintf("%s bbl/dy",round(coef(m)[2]*1e6,-2)), srt=-25, col=Set1[1])
-mtext("Total daily-injection\n(AOIs only)", line=-3, adj=0.03, side=3)
+	plot(x, y, col=NA,
+		ylim=c(0, max(y,na.rm=TRUE)*1.25),
+		xlim=xl, xaxs='i',
+		type='l',ylab=expression(10^6~~"bbl/dy"), main="Total daily-injection (AOIs only)")
+	abline(v=events, col=Set1[c(2,3,3,3)]) #, lty=c(1,5,5,2))
+	stages.st <- as.Date(paste0("2016-",c("03-07","03-29","04-18","05-08")))
+	stages.en <- as.Date(paste0("2016-",c("03-28","04-17","05-07","05-28")))
+	stg.st <- c(1.8, 1.8*0.75, (1.8*0.75)*0.75, ((1.8*0.75)*0.75)*0.75)
+	stg.en <- c(1.8*0.75, (1.8*0.75)*0.75, ((1.8*0.75)*0.75)*0.75, (((1.8*0.75)*0.75)*0.75)*0.75)
+	#segments(stages.st, stg.st, stages.en, stg.en, lty=2)
+	text(events, 3.7 - 0.63*(seq_along(events)), evt.labels, col=Set1[c(2,3,3,3)], pos=2, offset=0.2, cex=0.85)
+	abline(m, col=Set1[1], lty=4)
+	lines(x, y, lwd=1.2)
+	text(as.Date('2014-06-01'), 2.7, sprintf("%s bbl/dy",round(coef(m)[2]*1e6,-2)), srt=-5, col=Set1[1], cex=0.8)
 
-# plot(x, cumsum(rowSums(Y, na.rm=TRUE))/1e9,
-# 	xlim=xl, xaxs='i',
-# 	type='s',ylab=expression(10^9~~"bbl"))
-# #segments(as.Date('2015-01-01'), 0, as.Date('2016-07-01'), 1.3, lty=2)
-# abline(v=events, col=Set1[c(2,3,3,3)], lty=c(1,5,5,2))
-# mtext("Reported Cumulative Volume", line=-2, adj=0.03)
+	# plot(x, cumsum(rowSums(Y, na.rm=TRUE))/1e9,
+	# 	xlim=xl, xaxs='i',
+	# 	type='s',ylab=expression(10^9~~"bbl"))
+	# #segments(as.Date('2015-01-01'), 0, as.Date('2016-07-01'), 1.3, lty=2)
+	# abline(v=events, col=Set1[c(2,3,3,3)], lty=c(1,5,5,2))
+	# mtext("Reported Cumulative Volume", line=-2, adj=0.03)
 
-par(mar=c(3,4.5,1,1))
-y2 <- apply(Y, 1, function(.x.) length(na.omit(.x.)))
-plot(x, y2, col=NA,
-	xlim=xl, xaxs='i')
-abline(v=events, col=Set1[c(2,3,3,3)], lty=c(1,5,5,2))
-lines(x, y2, type='s')
-mtext("Active injectors", line=-2, adj=0.03)
+	par(mar=c(2,4.5,0.2,1))
+	y2 <- apply(Y, 1, function(.x.) length(na.omit(.x.)))
+	plot(x, y2, col=NA,
+		xlim=xl, xaxs='i', ylab="")
+	abline(v=events, col=Set1[c(2,3,3,3)]) #, lty=c(1,5,5,2))
+	lines(x, y2, type='s', lwd=1.2)
+	text(as.Date('2014-01-01'), 550, "Number of injectors\nin database", cex=0.8, pos=4)
+	
+	plot.new()
 
-plot.new()
+}
 
 #+++++++++++
 
-#FIG <- function(x, ...){}
-#if (shake){
-#	FIG() 
-#} else {
-#	figfi <- "some_figure"
-#	h <- 7
-#	w <- 7
-#	niceEPS(figfi, h=h, w=w, toPDF=TRUE)
-#	try(FIG())
-#	niceEPS()
-#	nicePNG(figfi, h=h, w=w)
-#	try(FIG())
-#	nicePNG()
-#}
+grDevices::png(filename="OCC_daily_volumes_AOI.png", width=11, height=5.0, units='in', res=300, bg='white')
+try(FIG())
+dev.off()
 
 ###
-
-#kook::warn_shake()
-#if (require('kook') & packageVersion("kook") < '1.0.17') stop("update kook -- some defaults have changed!")
 
