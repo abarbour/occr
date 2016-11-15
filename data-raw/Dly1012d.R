@@ -50,6 +50,11 @@ if (!exists("dly.raw") | redo.raw){
 	read_excel("Dly1012d.xlsx") -> dly.raw
 }
 
+# Colorgorical
+set.seed(12654)
+cty.pal <- sample(c("#21f0b6", "#104b6d", "#a7d64e", "#4220f0", "#73f02e", "#b70d61", "#8ae1f9", "#315c31", "#fd6ca0", "#04a38f", "#1f3e9e", "#d5d0fa", "#7b038e", "#1c9820", "#c551dc", "#3d8bb7", "#6e334f", "#7f73ed", "#f1d438", "#c00018", "#e9bf98", "#6e3901", "#fe8f06", "#ab7673", "#a37e1a", "#fa1bfc"))
+n.cty.pal <- length(cty.pal)
+
 redo.cty <- FALSE
 if (!exists("counties") | redo.cty){
 	counties <- readOGR("tl_2010_40_county10",layer="tl_2010_40_county10")
@@ -179,52 +184,63 @@ evt.labels <- c("AOI filing requirement begins", expression(bold(M)*5.8), expres
 Dly.api.filt <- filter(Dly.api, Report.Date >= as.Date('2014-01-01'))
 xl <- range(c(Dly.api.filt$Report.Date, events)) + c(-7,7)
 
-layout(matrix(c(1,2,3,4,5)), heights=c(1,1,1,1,1))
+
+CTY <- function(alph=0.2){
+	plot(counties, add=TRUE, border='grey', col=adjustcolor(cty.pal[((as.numeric(counties$County)-1) %% n.cty.pal)+1], alpha=alph))
+	plot(extent(pltdf), add=TRUE, lty=2)
+	#lines(eqhull, lty=2)
+}
+
+
+layout(matrix(c(1,1, 2,2, 3,3, 4,4, 5,6,7,8), 4, byrow=FALSE)) #, heights=c(1,1))
 
 par(las=1, cex=0.9)
 
-par(mar=20*c(0.01,0.3,0.01,0.3))
+par(mar=10*c(0.01,0.01,0.01,0.01))
 defc <- 0.15
 pltdf <- All.wells.cty
 cexs <- scale(pltdf$Total.volume.bbl, center=FALSE)+defc
 cexs2 <- scale(pltdf$Max.volume.bbl, center=FALSE)+defc
 cexs3 <- scale((10**round(Eqs$Magnitude))**(1/2), center=FALSE)*defc
-bgs <- adjustcolor(as.numeric(pltdf$County), alpha=0.5)
+bgs <- adjustcolor(cty.pal[((as.numeric(pltdf$County)-1) %% n.cty.pal)+1], alpha=0.5)
 cols <- ifelse(bgs==defc, NA, "black")
 
 plot(pltdf, col=NA)
-plot(counties, add=TRUE, border='grey', col=adjustcolor(as.numeric(counties$County), alpha=0.2))
-plot(extent(pltdf), add=TRUE, lty=2)
-#lines(eqhull, lty=2)
+CTY(0.5)
+plot(pltdf, 
+	bg=bgs, col=cols,
+	pch=22, 
+	add=TRUE)
+mtext("Active Injectors\n(AOIs only)", side=1, adj=0.15, line=-4, font=2)
+
+plot(pltdf, col=NA)
+CTY()
 plot(pltdf, 
 	bg=bgs, col=cols,
 	pch=22, 
 	cex=cexs,
 	add=TRUE)
-mtext("Total\nvolume", side=1, adj=0.15, line=-4, font=2)
+mtext("Total volume", side=1, adj=0.15, line=-4, font=2)
 
 plot(pltdf, col=NA)
-plot(counties, add=TRUE, border='grey', col=adjustcolor(as.numeric(counties$County), alpha=0.2))
-plot(extent(pltdf), add=TRUE, lty=2)
-#lines(eqhull, lty=2)
-plot(pltdf, 
-	bg=bgs, col=cols,
-	pch=22, 
-	cex=cexs2,
-	add=TRUE)
-mtext("Peak\ndaily\nrate", side=1, adj=0.15, line=-4, font=2)
-
-plot(Eqs, col=NA)
-plot(counties, add=TRUE, border='grey', col=adjustcolor(as.numeric(counties$County), alpha=0.2))
-plot(extent(pltdf), add=TRUE, lty=2)
-#lines(eqhull, lty=2)
+CTY()
 plot(Eqs, 
 	#bg=bgs, col=cols, 
 	pch=1, 
 	cex=cexs3,
 	add=TRUE)
-mtext("ANSS\nM>=2\nZ<=10", side=1, adj=0.15, line=-4, font=2)
+mtext("ANSS  M>=2, Z<=10", side=1, adj=0.15, line=-4, font=2)
 
+plot(pltdf, col=NA)
+CTY()
+plot(pltdf, 
+	bg=bgs, col=cols,
+	pch=22, 
+	cex=cexs2,
+	add=TRUE)
+mtext("Peak daily rate", side=1, adj=0.15, line=-4, font=2)
+
+par(mar=c(2,4.5,1,1))
 
 x <- Dly.api.filt[,1]
 Y <- Dly.api.filt[,-1]
@@ -232,7 +248,8 @@ y <- rowSums(Y, na.rm=TRUE)/1e6
 xi <- which(x >= as.Date('2015-05-01')) #events[1])
 m <- lm(y[xi] ~ x[xi])
 
-par(mar=c(2,4.5,1,1))
+plot.new()
+
 plot(x, y,
 	ylim=c(0, max(y,na.rm=TRUE)),
 	xlim=xl, xaxs='i',
@@ -263,6 +280,7 @@ abline(v=events, col=Set1[c(2,3,3,3)], lty=c(1,5,5,2))
 lines(x, y2, type='s')
 mtext("Active injectors", line=-2, adj=0.03)
 
+plot.new()
 
 #+++++++++++
 
