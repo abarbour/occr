@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+FILE=tl_2010_40_county10.zip
+BASE=`basename ${FILE} ".zip"`
+URL=https://www2.census.gov/geo/tiger/TIGER2010/COUNTY/2010/${FILE}
+wget -O ${FILE} ${URL}
+mkdir -vp ${BASE}
+unzip -f ${FILE} -d ${BASE}
+ls -ltr ${BASE}

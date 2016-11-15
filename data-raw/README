@@ -2,6 +2,8 @@ README
 /Users/abarbour/survey.processing/development/R/packages/occr/data-raw
 Creation date:	Mon Nov  7 16:19:19 PST 2016
 
-http://www.occeweb.com/og/ogdatafiles2.htm
+Injection data:
+	http://www.occeweb.com/og/ogdatafiles2.htm
 
-
+Counties:
+	https://www2.census.gov/geo/tiger/TIGER2010/COUNTY/2010/tl_2010_40_county10.zip
