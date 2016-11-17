@@ -147,7 +147,7 @@ if (!exists("Eqs") | !exists("eqhull") | redo | redo.quakes){
 	eqhull <- Eqlocs[eqhull.inds, ]
 }
 
-redo.wells <- FALSE
+redo.wells <- TRUE
 if (!exists("All.wells") | redo | redo.raw | redo.wells){
 	bad.coords <- c("3508123432","3508521170","3511921090")
 	All.dly %>% as.data.frame %>% tbl_df %>%
@@ -161,7 +161,7 @@ if (!exists("All.wells") | redo | redo.raw | redo.wells){
 		Lat = unique.warn(Latitude), 
 		First.data = min(Report.Date), 
 		Total.volume.bbl=sum(Volume.BPD, na.rm=TRUE),
-		Max.volume.bbl=max(Volume.BPD, na.rm=TRUE),
+		Max.volume.bbl=max(diff(Volume.BPD), na.rm=TRUE),
 		N = n()) %>%
 	dplyr::arrange(., Total.volume.bbl) -> All.wells
 	coordinates(All.wells) <- ~ Lon + Lat
@@ -186,7 +186,8 @@ evt.labels <- c("Daily filing regulation begins", expression(bold(M)*5.8), expre
 Dly.api.filt <- filter(Dly.api, Report.Date >= as.Date('2014-01-01'))
 xl <- range(c(Dly.api.filt$Report.Date, events)) + c(-7,7)
 
-
+pltdf <- All.wells.cty
+	
 CTY <- function(alph=0.2){
 	plot(counties, add=TRUE, border='grey', col=adjustcolor(cty.pal[((as.numeric(counties$County)-1) %% n.cty.pal)+1], alpha=alph))
 	plot(extent(pltdf), add=TRUE, lty=2)
@@ -200,7 +201,6 @@ FIG <- function(){
 
 	par(mar=10*c(0.01,0.01,0.01,0.01), lend='square')
 	defc <- 0.15
-	pltdf <- All.wells.cty
 	pltdf.bb <- bbox(pltdf)
 	cexs <- scale(pltdf$Total.volume.bbl, center=FALSE)+defc
 	cexs2 <- scale(pltdf$Max.volume.bbl, center=FALSE)+defc
