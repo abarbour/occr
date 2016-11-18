@@ -1,17 +1,20 @@
 Package: occr
 Type: Package
-Title: Access to some data in the OCCEWEB database
-Version: 0.1-20161107
+Title: Access to injection data in the OCCEWEB database
+Version: 0.1-20161118
 Author: Andrew J Barbour
 Maintainer: AJB <andy.barbour@gmail.com>
-Description: DD
-    Use four spaces when indenting paragraphs within the Description.
+Description: Provides access to some of the injection data
+    released by the Oklahoma Corporation Commission.
 License: GPL
 Depends: tidyverse
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat,
     covr,
+    sp,
+    maps,
+    raster,
     rgdal,
     data.table,
     dtplyr,

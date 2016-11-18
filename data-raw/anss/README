@@ -4,6 +4,23 @@ Creation date:	Mon Nov 14 16:55:34 PST 2016
 
 Your search parameters are:
 catalog=ANSS
+start_time=1900/01/01,00:00:00
+end_time=2016/11/18,20:30:46
+minimum_latitude=35.2401
+maximum_latitude=36.9946
+minimum_longitude=-99.3141
+maximum_longitude=-96.3252
+minimum_magnitude=0
+maximum_magnitude=10
+event_type=E
+include events with no magnitude
+Output can be downloaded from:
+    URL:   http://www.ncedc.org/ftp/outgoing/userdata/web/catsearch.21973
+        Size:  7703 lines (616518 bytes)
+	File will be automatically deleted in 2 days.
+
+Your search parameters are:
+catalog=ANSS
 start_time=2009/01/01,00:00:00
 end_time=2016/11/15,01:20:38
 minimum_latitude=35.2401

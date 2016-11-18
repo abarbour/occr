@@ -147,6 +147,20 @@ if (!exists("Eqs") | !exists("eqhull") | redo | redo.quakes){
 	eqhull <- Eqlocs[eqhull.inds, ]
 }
 
+if (!exists('anss') | !exists('anss.cty') | redo | redo.quakes){
+	read_csv("anss/anss_catalog.csv", col_names=TRUE) %>%
+		dplyr::mutate(., Date = as.Date(DateTime)) %>%
+		dplyr::filter(., Date >= as.Date(date.filt1)) -> anss
+	coordinates(anss) <- ~ Longitude + Latitude
+	proj4string(anss) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+	
+	ovr <- over(anss, counties)
+	cbind(as.data.frame(anss), ovr) -> anss.cty
+	coordinates(anss.cty) <- ~ Longitude + Latitude
+	proj4string(anss.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+	
+}
+
 redo.wells <- TRUE
 if (!exists("All.wells") | redo | redo.raw | redo.wells){
 	bad.coords <- c("3508123432","3508521170","3511921090")
@@ -176,8 +190,19 @@ if (!exists("All.wells.cty") | redo | redo.raw | redo.cty | redo.wells){
 	proj4string(All.wells.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 }
 
-Dly1012d <- All.wells.cty
+# Save for package ...
+
+Dly1012d <- tbl_df(All.dly) # data.table -> tibble
 save(Dly1012d, file='Dly1012d.rda')
+
+Wells1012d <- All.wells.cty # SpatialPointsDataFrame
+save(Wells1012d, file='Wells1012d.rda')
+
+OKcounties <- counties #"SpatialPolygonsDataFrame"
+save(OKcounties, file='OKcounties.rda')
+
+OKquakes <- anss.cty #"SpatialPointsDataFrame"
+save(OKquakes, file='OKquakes.rda')
 
 #library(occr)
 #pltdf <- Dly1012d
