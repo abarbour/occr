@@ -176,6 +176,11 @@ if (!exists("All.wells.cty") | redo | redo.raw | redo.cty | redo.wells){
 	proj4string(All.wells.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 }
 
+Dly1012d <- All.wells.cty
+save(Dly1012d, file='Dly1012d.rda')
+
+#library(occr)
+#pltdf <- Dly1012d
 dcast(setDT(All.dly), Report.Date ~ API, value.var=c('Volume.BPD'), drop=FALSE, fun.aggregate=mean) %>% as.data.frame -> Dly.api
 
 #matplot(Dly.api[,1], Dly.api[,-1], type='l')
