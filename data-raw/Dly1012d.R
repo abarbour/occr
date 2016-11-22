@@ -224,6 +224,8 @@ CTY <- function(alph=0.2){
 	#lines(eqhull, lty=2)
 }
 
+message("Plotting... See also is-oig/Mapping/Oklahoma/map_injection.R")
+
 FIG <- function(){
 	layout(matrix(c(1,1, 2,2, 3,3, 4,4, 5,6, 7,8, 5,6, 7,8), 4, byrow=FALSE), heights=c(1,1.5,1.5,1))
 
@@ -337,3 +339,4 @@ dev.off()
 
 ###
 
+message("Update description sub-version to  ", strftime(Sys.time(),"%Y%m%d", tz='UTC'))
