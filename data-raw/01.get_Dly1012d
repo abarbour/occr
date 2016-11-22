@@ -1,5 +1,5 @@
 #!/bin/sh
 set -e
 wget -O Dly1012d.zip ftp://ftp.occeweb.com/OG_DATA/Dly1012d.ZIP
-unzip -f Dly1012d.zip
+unzip -fo Dly1012d.zip
 rm -f Dly1012d.csv

@@ -1,16 +1,19 @@
 Package: occr
 Type: Package
 Title: Access to injection data in the OCCEWEB database
-Version: 0.1-20161121
+Version: 0.1-20161122
 Author: Andrew J Barbour
 Maintainer: AJB <andy.barbour@gmail.com>
 Description: Provides access to some of the injection data
     released by the Oklahoma Corporation Commission.
-License: GPL
-Depends: tidyverse
+License: GPL3
+Imports:
+    tidyverse,
+    data.table
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat,
+Suggests:
+    testthat,
     covr,
     sp,
     maps,
@@ -19,3 +22,4 @@ Suggests: testthat,
     data.table,
     dtplyr,
     readxl
+RoxygenNote: 5.0.1

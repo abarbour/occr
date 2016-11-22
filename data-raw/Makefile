@@ -4,9 +4,12 @@ DLYSCP=01.get_Dly1012d
 
 all: update
 
-update: $(RDA)
+update: reup $(RDA)
 
-$(RDA): Dly1012d.R $(DLY)
+reup:
+	$(DLYSCP)
+
+$(RDA): Dly1012d.R
 	Rscript $<
 
 $(DLY): $(DLYSCP)
