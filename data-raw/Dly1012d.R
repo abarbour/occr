@@ -149,8 +149,8 @@ if (!exists("Eqs") | !exists("eqhull") | redo | redo.quakes){
 
 if (!exists('anss') | !exists('anss.cty') | redo | redo.quakes){
 	read_csv("anss/anss_catalog.csv", col_names=TRUE) %>%
-		dplyr::mutate(., Date = as.Date(DateTime)) %>%
-		dplyr::filter(., Date >= as.Date(date.filt1)) -> anss
+		dplyr::mutate(., Date = as.Date(DateTime)) -> anss
+		#%>% dplyr::filter(., Date >= as.Date(date.filt1)) 
 	coordinates(anss) <- ~ Longitude + Latitude
 	proj4string(anss) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 	
