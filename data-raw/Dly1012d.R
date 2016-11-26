@@ -14,6 +14,7 @@
 
 ## libs
 
+library(sp)
 library(maps)
 library(raster)
 library(rgdal)
@@ -155,7 +156,7 @@ if (!exists('anss') | !exists('anss.cty') | redo | redo.quakes){
 	proj4string(anss) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 	
 	ovr <- over(anss, counties)
-	cbind(as.data.frame(anss), ovr) -> anss.cty
+	cbind(as.data.frame(anss), ovr) %>% dplyr::filter(., !is.na(NAME10)) -> anss.cty
 	coordinates(anss.cty) <- ~ Longitude + Latitude
 	proj4string(anss.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 	

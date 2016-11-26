@@ -2,6 +2,33 @@ README
 /Users/abarbour/survey.processing/development/R/packages/occr/data-raw/anss
 Creation date:	Mon Nov 14 16:55:34 PST 2016
 
+> bbox(OKcounties)
+         min       max
+x -103.00245 -94.43066
+y   33.61579  37.00231
+
+
+Your search parameters are:
+catalog=ANSS
+start_time=1898/01/01,00:00:00
+end_time=2016/11/26,05:12:50
+minimum_latitude=33.6
+maximum_latitude=37.1
+minimum_longitude=-103.1
+maximum_longitude=-94.3
+minimum_magnitude=0
+maximum_magnitude=10
+event_type=E
+include events with no magnitude
+Output can be downloaded from:
+    URL:   http://www.ncedc.org/ftp/outgoing/userdata/web/catsearch.8106
+    Size:  8240 lines (659630 bytes)
+File will be automatically deleted in 2 days.
+
+
+
+#++++++ incomplete
+
 Your search parameters are:
 catalog=ANSS
 start_time=1900/01/01,00:00:00
