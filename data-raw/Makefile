@@ -9,7 +9,7 @@ update: reup $(RDA)
 reup:
 	$(DLYSCP)
 
-$(RDA): Dly1012d.R
+$(RDA): Dly1012d.R $(DLY)
 	Rscript $<
 
 $(DLY): $(DLYSCP)

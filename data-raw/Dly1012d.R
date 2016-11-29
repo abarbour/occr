@@ -340,4 +340,7 @@ dev.off()
 
 ###
 
-message("Update description sub-version to  ", strftime(Sys.time(),"%Y%m%d", tz='UTC'))
+message("")
+message("!!!\t1) Update description sub-version to  ", strftime(Sys.time(),"%Y%m%d", tz='UTC'))
+message("!!!\t2) Rebuild package.")
+message("")
