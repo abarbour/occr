@@ -162,23 +162,26 @@ if (!exists('anss') | !exists('anss.cty') | redo | redo.quakes){
 	
 }
 
+# flipped or zero coords
+bad.coords <- c("3508123432","3508521170","3511921090","3511722524")
+
 redo.wells <- TRUE
 if (!exists("All.wells") | redo | redo.raw | redo.wells){
-	bad.coords <- c("3508123432","3508521170","3511921090")
-	All.dly %>% as.data.frame %>% tbl_df %>%
-	dplyr::filter(., !(API %in% bad.coords)) %>%
-	group_by(., API) %>% 
-	summarize(.,
-		Name = unique.warn(Well.Name), 
-		Number = unique.warn(Well.Number), 
-		Operator = unique.warn(Operator.Name),
-		Lon = unique.warn(Longitude),
-		Lat = unique.warn(Latitude), 
-		First.data = min(Report.Date), 
-		Total.volume.bbl=sum(Volume.BPD, na.rm=TRUE),
-		Max.volume.bbl=max(diff(Volume.BPD), na.rm=TRUE),
-		N = n()) %>%
-	dplyr::arrange(., Total.volume.bbl) -> All.wells
+	All.dly %>% as.data.frame %>% tbl_df -> Orig.dly
+	Orig.dly %>%
+		dplyr::filter(., !(API %in% bad.coords)) %>%
+		group_by(., API) %>% 
+		summarize(.,
+			Name = unique.warn(Well.Name), 
+			Number = unique.warn(Well.Number), 
+			Operator = unique.warn(Operator.Name),
+			Lon = unique.warn(Longitude),
+			Lat = unique.warn(Latitude), 
+			First.data = min(Report.Date), 
+			Total.volume.bbl=sum(Volume.BPD, na.rm=TRUE),
+			Max.volume.bbl=max(diff(Volume.BPD), na.rm=TRUE),
+			N = n()) %>%
+		dplyr::arrange(., Total.volume.bbl) -> All.wells
 	coordinates(All.wells) <- ~ Lon + Lat
 	proj4string(All.wells) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 }
