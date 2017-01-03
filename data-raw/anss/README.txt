@@ -2,6 +2,8 @@ README
 /Users/abarbour/survey.processing/development/R/packages/occr/data-raw/anss
 Creation date:	Mon Nov 14 16:55:34 PST 2016
 
+http://ncedc.org/anss/catalog-search.html
+
 > bbox(OKcounties)
          min       max
 x -103.00245 -94.43066
@@ -9,7 +11,28 @@ y   33.61579  37.00231
 
 NOTE:
 	* be sure to select cvs as format of output, and ...
-	* after downloading, be sure to strip out non-data/header lines if they exist
+	* after downloading, be sure to strip out non-data/header lines if they exist (csv output shouldn't need touchups)
+	* relink to anss_catalog.csv
+	* go back and re-run Dly*.R
+
+---- 20170103
+
+Your search parameters are:
+catalog=ANSS
+start_time=1898/01/01,00:00:00
+end_time=2017/01/03,18:53:44
+minimum_latitude=33.6
+maximum_latitude=37.1
+minimum_longitude=-103.1
+maximum_longitude=-94.3
+minimum_magnitude=0
+maximum_magnitude=10
+event_type=E
+include events with no magnitude
+Output can be downloaded from:
+    URL:   http://www.ncedc.org/ftp/outgoing/userdata/web/catsearch.5994
+    Size:  8387 lines (671401 bytes)
+File will be automatically deleted in 2 days.
 
 ---- 20161212
 
