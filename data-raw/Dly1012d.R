@@ -3,9 +3,9 @@
 ###
 #	Dly1012d.R
 #	/Users/abarbour/survey.processing/development/R/packages/occr/data-raw
-#	Created by 
+#	Created by
 #		/Users/abarbour/bin/ropen ( v. 2.6.0 )
-#	on 
+#	on
 #		2016:312 (07-November)
 ###
 
@@ -42,12 +42,12 @@ redo <- FALSE
 
 redo.raw <- FALSE
 if (!exists("dly.raw") | redo.raw){
-	#Arbuckle AOI Wells - 1012D Reported Volumes	
+	#Arbuckle AOI Wells - 1012D Reported Volumes
 	#This file contains the weekly reports of daily
 	#volumes of all Arbuckle disposal wells in the Area
 	#of Interest for Triggered Seismicity, submitted by
 	#operators via the OCC efile system. Filing of the
-	#daily data for these wells began on 3/27/2016	
+	#daily data for these wells began on 3/27/2016
 	#Daily	Jim Marlatt 405-522-2758	ZIP
 	read_excel("Dly1012d.xlsx") -> dly.raw
 }
@@ -74,22 +74,22 @@ if (!exists("counties") | redo.cty){
 	# proj4string :
 	# [+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0]
 	# Data attributes:
-	
+
 	#   STATEFP10          COUNTYFP10         COUNTYNS10          GEOID10
 	#  Length:77          Length:77          Length:77          Length:77
 	#  Class :character   Class :character   Class :character   Class :character
 	#  Mode  :character   Mode  :character   Mode  :character   Mode  :character
-	
+
 	#     NAME10           NAMELSAD10           LSAD10           CLASSFP10
 	#  Length:77          Length:77          Length:77          Length:77
 	#  Class :character   Class :character   Class :character   Class :character
 	#  Mode  :character   Mode  :character   Mode  :character   Mode  :character
-	
+
 	#    MTFCC10            CSAFP10            CBSAFP10          METDIVFP10
 	#  Length:77          Length:77          Length:77          Length:77
 	#  Class :character   Class :character   Class :character   Class :character
 	#  Mode  :character   Mode  :character   Mode  :character   Mode  :character
-	
+
 	#   FUNCSTAT10           ALAND10             AWATER10          INTPTLAT10
 	#  Length:77          Min.   :9.611e+08   Min.   :   952238   Length:77
 	#  Class :character   1st Qu.:1.656e+09   1st Qu.: 13695217   Class :character
@@ -97,7 +97,7 @@ if (!exists("counties") | redo.cty){
 	#                     Mean   :2.307e+09   Mean   : 43859903
 	#                     3rd Qu.:2.592e+09   3rd Qu.: 50982330
 	#                     Max.   :5.818e+09   Max.   :242915467
-	
+
 	#   INTPTLON10
 	#  Length:77
 	#  Class :character
@@ -123,8 +123,8 @@ if (!exists("All.dly") | redo | redo.raw){
 	dplyr::select(dly.raw, -DirArea) -> dly.new
 	names(dly.new) <- fix.names(names(dly.new))
 
-	dly.new %>% 
-	dplyr::mutate(., 
+	dly.new %>%
+	dplyr::mutate(.,
 		Report.Date = as.Date(Report.Date),
 		API = factor(trimws(gsub("^'3","3", API))),
 		Operator.Number = factor(Operator.Number),
@@ -139,15 +139,15 @@ date.filt1 <- "2015-04-01"
 if (!exists('anss') | !exists('anss.cty') | redo | redo.quakes){
 	read_csv("anss/anss_catalog.csv", col_names=TRUE) %>%
 		dplyr::mutate(., Date = as.Date(DateTime)) -> anss
-		#%>% dplyr::filter(., Date >= as.Date(date.filt1)) 
+		#%>% dplyr::filter(., Date >= as.Date(date.filt1))
 	coordinates(anss) <- ~ Longitude + Latitude
 	proj4string(anss) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
-	
+
 	ovr <- over(anss, counties)
 	cbind(as.data.frame(anss), ovr) %>% dplyr::filter(., !is.na(NAME10)) -> anss.cty
 	coordinates(anss.cty) <- ~ Longitude + Latitude
 	proj4string(anss.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
-	
+
 }
 
 # flipped or zero coords
@@ -158,14 +158,14 @@ if (!exists("All.wells") | redo | redo.raw | redo.wells){
 	All.dly %>% as.data.frame %>% tbl_df -> Orig.dly
 	Orig.dly %>%
 		dplyr::filter(., !(API %in% bad.coords)) %>%
-		group_by(., API) %>% 
+		group_by(., API) %>%
 		summarize(.,
-			Name = unique.warn(Well.Name), 
-			Number = unique.warn(Well.Number), 
+			Name = unique.warn(Well.Name),
+			Number = unique.warn(Well.Number),
 			Operator = unique.warn(Operator.Name),
 			Lon = unique.warn(Longitude),
-			Lat = unique.warn(Latitude), 
-			First.data = min(Report.Date), 
+			Lat = unique.warn(Latitude),
+			First.data = min(Report.Date),
 			Total.volume.bbl=sum(Volume.BPD, na.rm=TRUE),
 			Max.volume.bbl=max(diff(Volume.BPD), na.rm=TRUE),
 			N = n()) %>%
@@ -176,7 +176,7 @@ if (!exists("All.wells") | redo | redo.raw | redo.wells){
 
 if (!exists("All.wells.cty") | redo | redo.raw | redo.cty | redo.wells){
 	ovr <- over(All.wells, counties)
-	cbind(as.data.frame(All.wells), ovr) %>% 
+	cbind(as.data.frame(All.wells), ovr) %>%
 		dplyr::arrange(., -Total.volume.bbl) -> All.wells.cty
 	coordinates(All.wells.cty) <- ~ Lon + Lat
 	proj4string(All.wells.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
@@ -202,5 +202,6 @@ message("For plotting... see is-oig/Mapping/Oklahoma/map_injection.R")
 
 message("")
 message("!!!\t1) Update description sub-version to  ", strftime(Sys.time(),"%Y%m%d", tz='UTC'))
-message("!!!\t2) Rebuild package.")
+message("!!!\t2) Update ANSS and zzz.R.")
+message("!!!\t3) Rebuild package.")
 message("")

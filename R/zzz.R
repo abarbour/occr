@@ -6,11 +6,13 @@
 .onAttach <- function(...) {
   ##
   pack <- "occr"
+  last.anss <- "20170103"
   packv <- utils::packageVersion(pack)
   packvp <- strftime(as.Date(as.character(packv[1,3]), format='%Y%m%d', tz='UTC'), format='%a, %b %d, %Y')
   packageStartupMessage(
-    sprintf("Loaded %s (%s) -- injection data in Oklahoma from OCC\n  Note:\n    %s\n    %s",
+    sprintf("Loaded %s (%s) -- injection data in Oklahoma from OCC\n  Note:\n    %s\n    %s\n    %s",
             pack, packv,
             paste("1) sub-version number shows last update (", packvp, ')'),
-            "2) some data (e.g., 1012d) are daily, but filings may be incomplete through previous week"))
+            "2) some data (e.g., 1012d) are daily, but filings may be incomplete through previous week",
+            paste("3) Last update to ANSS catalog was", last.anss)))
 }
