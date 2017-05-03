@@ -6,8 +6,8 @@
 .onAttach <- function(...) {
   ##
   pack <- "occr"
-  last.anss <- "20170503"
-  # ^^ update this if ANSS catalog changes
+  last.comcat <- "20170503"
+  # ^^ update this if ComCat catalog changes
   packv <- utils::packageVersion(pack)
   packvp <- strftime(as.Date(as.character(packv[1,3]), format='%Y%m%d', tz='UTC'), format='%a, %b %d, %Y')
   packageStartupMessage(
@@ -15,5 +15,5 @@
             pack, packv,
             paste("1) sub-version number shows last update (", packvp, ')'),
             "2) some data (e.g., 1012d) are daily, but filings may be incomplete through previous week",
-            paste("3) Last update to ANSS catalog was", last.anss)))
+            paste("3) Last update to earthquake catalog (ComCat) was", last.comcat)))
 }

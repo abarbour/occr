@@ -117,7 +117,6 @@ unique.warn <- function(.x.){
 }
 
 
-
 if (!exists("All.dly") | redo | redo.raw){
 
 	dplyr::select(dly.raw, -DirArea) -> dly.new
@@ -136,22 +135,39 @@ if (!exists("All.dly") | redo | redo.raw){
 redo.quakes <- TRUE
 date.filt1 <- "2015-04-01"
 
-if (!exists('anss') | !exists('anss.cty') | redo | redo.quakes){
-	read_csv("anss/anss_catalog.csv", col_names=TRUE) %>%
-		dplyr::mutate(., Date = as.Date(DateTime)) -> anss
-		#%>% dplyr::filter(., Date >= as.Date(date.filt1))
-	coordinates(anss) <- ~ Longitude + Latitude
-	proj4string(anss) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+nad83 <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 
-	ovr <- over(anss, counties)
-	cbind(as.data.frame(anss), ovr) %>% dplyr::filter(., !is.na(NAME10)) -> anss.cty
-	coordinates(anss.cty) <- ~ Longitude + Latitude
-	proj4string(anss.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+# NOTE: ANSS replaced by ComCat (see below)
+# if (!exists('anss') | !exists('anss.cty') | redo | redo.quakes){
+# 	read_csv("anss/anss_catalog.csv", col_names=TRUE) %>%
+# 		dplyr::mutate(., Date = as.Date(DateTime)) -> anss
+# 	sp::coordinates(anss) <- ~ Longitude + Latitude
+# 	proj4string(anss) <- nad83
+# 
+# 	ovr <- sp::over(anss, counties)
+# 	cbind(as.data.frame(anss), ovr) %>% dplyr::filter(., !is.na(NAME10)) -> anss.cty
+# 	sp::coordinates(anss.cty) <- ~ Longitude + Latitude
+# 	proj4string(anss.cty) <- nad83
+# }
 
+if (!exists('comcat') | !exists('comcat.cty') | redo | redo.quakes){
+	read_csv("comcat/comcat_catalog.csv", col_names=TRUE) %>%
+		dplyr::rename(., DateTime = `time`) %>%
+		dplyr::mutate(., Date = as.Date(DateTime)) -> comcat
+	sp::coordinates(comcat) <- ~ longitude + latitude
+	proj4string(comcat) <- nad83
+	
+	ovr <- sp::over(comcat, counties)
+	cbind(as.data.frame(comcat), ovr) %>% dplyr::filter(., !is.na(NAME10)) -> comcat.cty
+	sp::coordinates(comcat.cty) <- ~ longitude + latitude
+	proj4string(comcat.cty) <- nad83
 }
 
+#stop()
+
 # flipped or zero coords
-bad.coords <- c("3508123432","3508521170","3511921090","3511722524")
+bad.coords <- c("3508123432") 
+# Fixed as of May 3 2017: "3508521170","3511921090","3511722524"
 
 redo.wells <- TRUE
 if (!exists("All.wells") | redo | redo.raw | redo.wells){
@@ -170,16 +186,16 @@ if (!exists("All.wells") | redo | redo.raw | redo.wells){
 			Max.volume.bbl=max(diff(Volume.BPD), na.rm=TRUE),
 			N = n()) %>%
 		dplyr::arrange(., Total.volume.bbl) -> All.wells
-	coordinates(All.wells) <- ~ Lon + Lat
-	proj4string(All.wells) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+	sp::coordinates(All.wells) <- ~ Lon + Lat
+	proj4string(All.wells) <- nad83
 }
 
 if (!exists("All.wells.cty") | redo | redo.raw | redo.cty | redo.wells){
-	ovr <- over(All.wells, counties)
+	ovr <- sp::over(All.wells, counties)
 	cbind(as.data.frame(All.wells), ovr) %>%
 		dplyr::arrange(., -Total.volume.bbl) -> All.wells.cty
-	coordinates(All.wells.cty) <- ~ Lon + Lat
-	proj4string(All.wells.cty) <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+	sp::coordinates(All.wells.cty) <- ~ Lon + Lat
+	proj4string(All.wells.cty) <- nad83
 }
 
 # Save for package ...
@@ -193,7 +209,7 @@ save(Wells1012d, file='Wells1012d.rda')
 OKcounties <- counties #"SpatialPolygonsDataFrame"
 save(OKcounties, file='OKcounties.rda')
 
-OKquakes <- anss.cty #"SpatialPointsDataFrame"
+OKquakes <- comcat.cty #"SpatialPointsDataFrame"
 save(OKquakes, file='OKquakes.rda')
 
 message("For plotting... see is-oig/Mapping/Oklahoma/map_injection.R")

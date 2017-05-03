@@ -1,6 +1,9 @@
-README
 /Users/abarbour/survey.processing/development/R/packages/occr/data-raw/anss
 Creation date:	Mon Nov 14 16:55:34 PST 2016
+
+***
+NOW SEE ../comcat
+***
 
 http://ncedc.org/anss/catalog-search.html
 
