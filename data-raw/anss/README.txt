@@ -15,6 +15,24 @@ NOTE:
 	* relink to anss_catalog.csv
 	* go back and re-run Dly*.R
 
+---- 20170503
+
+Your search parameters are:
+catalog=ANSS
+start_time=1898/01/01,00:00:00
+end_time=2017/05/03,21:33:48
+minimum_latitude=33.6
+maximum_latitude=37.1
+minimum_longitude=-103.1
+maximum_longitude=-94.3
+minimum_magnitude=0
+maximum_magnitude=10
+event_type=E
+include events with no magnitude
+Output can be downloaded from:
+    URL:   http://www.ncedc.org/ftp/outgoing/userdata/web/catsearch.5887
+    Size:  8550 lines (684445 bytes)
+
 ---- 20170103
 
 Your search parameters are:

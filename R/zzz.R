@@ -6,7 +6,8 @@
 .onAttach <- function(...) {
   ##
   pack <- "occr"
-  last.anss <- "20170103"
+  last.anss <- "20170503"
+  # ^^ update this if ANSS catalog changes
   packv <- utils::packageVersion(pack)
   packvp <- strftime(as.Date(as.character(packv[1,3]), format='%Y%m%d', tz='UTC'), format='%a, %b %d, %Y')
   packageStartupMessage(
