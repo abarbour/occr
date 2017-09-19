@@ -13,8 +13,11 @@ ymax        : 37.00231
 [-103.1, -94.3] Longitude
 
 NOTE:
-        be sure to select cvs as format of output, and ...
-	   -- after downloading, be sure to strip out non-data/header lines 
-	      if they exist (csv output shouldn't need touchups)
-	   -- relink to comcat_catalog.csv
-	   -- go back and re-run Dly*.R
+        be sure to 
+	  * select csv as format of output
+	  * check order (oldest first)
+	then, after downloading:
+	  * strip out non-data/header lines 
+	    if they exist (csv output shouldn't need touchups)
+	  * relink to comcat_catalog.csv
+	  * go back and re-run Dly*.R

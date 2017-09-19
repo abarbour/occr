@@ -1,7 +1,7 @@
 Package: occr
 Type: Package
 Title: Access to injection data in the OCCEWEB database
-Version: 0.2-20170503
+Version: 0.2-20170919
 Author: Andrew J Barbour
 Maintainer: AJB <andy.barbour@gmail.com>
 Description: Provides access to some of the injection data
