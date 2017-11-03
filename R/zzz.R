@@ -6,7 +6,7 @@
 .onAttach <- function(...) {
   ##
   pack <- "occr"
-  last.comcat <- "20170919"
+  last.comcat <- "20171103"
   # ^^ update this if ComCat catalog changes
   packv <- utils::packageVersion(pack)
   packvp <- strftime(as.Date(as.character(packv[1,3]), format='%Y%m%d', tz='UTC'), format='%a, %b %d, %Y')
