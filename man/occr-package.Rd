@@ -2,8 +2,8 @@
 % Please edit documentation in R/occr-package.R
 \docType{package}
 \name{occr-package}
-\alias{occr-package}
 \alias{occr}
+\alias{occr-package}
 \title{occr}
 \description{
 Description
@@ -14,3 +14,4 @@ Details
 \author{
 A.J. Barbour
 }
+

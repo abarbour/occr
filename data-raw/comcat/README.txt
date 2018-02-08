@@ -22,3 +22,6 @@ NOTE:
 	    if they exist (csv output shouldn't need touchups)
 	  * relink to comcat_catalog.csv
 	  * go back and re-run Dly*.R
+
+[ ] Note that now there is a limit, so will
+need to stitch multiple catalogs together (arg...)

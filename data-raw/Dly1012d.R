@@ -49,7 +49,12 @@ if (!exists("dly.raw") | redo.raw){
 	#operators via the OCC efile system. Filing of the
 	#daily data for these wells began on 3/27/2016
 	#Daily	Jim Marlatt 405-522-2758	ZIP
-	read_excel("Dly1012d.xlsx") -> dly.raw
+	#read_excel("Dly1012d.xlsx") -> dly.raw
+	
+	# Of course, the xlsx file stopped being up-to-date, so switch to csv
+	dfi <- "Dly1012d.csv.gz"
+	stopifnot(file.exists(dfi))
+	read_csv(dfi) -> dly.raw
 }
 
 # Colorgorical
@@ -107,8 +112,9 @@ if (!exists("counties") | redo.cty){
 
 #+++++++++++
 
-fix.names <- function(x){
-	gsub("\r\n",".",x)
+fix.names <- function(x, is.csv=TRUE){
+	sep <- ifelse(is.csv, "_", "\r\n")
+	gsub(sep,".",x)
 }
 unique.warn <- function(.x.){
 	x.u <- unique(.x.)
@@ -120,7 +126,7 @@ unique.warn <- function(.x.){
 if (!exists("All.dly") | redo | redo.raw){
 
 	dplyr::select(dly.raw, -DirArea) -> dly.new
-	names(dly.new) <- fix.names(names(dly.new))
+	names(dly.new) <- fix.names(names(dly.new), is.csv=TRUE)
 
 	dly.new %>%
 	dplyr::mutate(.,
@@ -166,7 +172,8 @@ if (!exists('comcat') | !exists('comcat.cty') | redo | redo.quakes){
 #stop()
 
 # flipped or zero coords
-bad.coords <- c("3508123432") 
+# as of Feb 8, 2018
+bad.coords <- c("3502721471", "3508123432") # swapped lat/lon, and zero, respectively
 # Fixed as of May 3 2017: "3508521170","3511921090","3511722524"
 
 redo.wells <- TRUE
