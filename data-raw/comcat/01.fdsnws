@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+#
+#extent(OKcounties)
+#class       : Extent
+#xmin        : -103.0025
+#xmax        : -94.43066
+#ymin        : 33.61579
+#ymax        : 37.00231
+#
+#M>=0
+#1898-01-01 00:00:00
+#
+#[33.5, 37.1] Latitude
+#[-103.1, -94.3] Longitude
+#
+
+D_INIT="1898-01-01"
+D_CHUNK1="2016-01-01"
+D_CURRENT=`date +"%Y-%m-%d"`
+
+FMT="format=csv"
+
+MAG="minmagnitude=0"
+LAT="minlatitude=33.615&maxlatitude=37.003"
+LON="minlongitude=-103.002&maxlongitude=-94.431"
+GEOG="${LAT}&${LON}"
+
+OPS="orderby=time-asc"
+
+# Form the webservice query
+QBASE="${FMT}&${MAG}&${GEOG}&${OPS}"
+URL="https://earthquake.usgs.gov/fdsnws/event/1/query?${QBASE}"
+
+#
+# Output is limited to 20e3 events, so chunk the process <-- add chunks as
+# necessary!
+#
+START_1="starttime=${D_INIT}"
+END_1="endtime=${D_CHUNK1}"
+T1="${START_1}&${END_1}"
+
+START_2="starttime=${D_CHUNK1}"
+END_2="endtime=${D_CURRENT}"
+T2="${START_2}&${END_2}"
+
+URL_1="${URL}&${T1}"
+URL_2="${URL}&${T2}"
+
+echo ${URL_1}
+wget --no-verbose -O query_chunk_01.csv ${URL_1}
+echo ${URL_2}
+wget --no-verbose -O query_chunk_02.csv ${URL_2}

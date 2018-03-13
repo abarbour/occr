@@ -41,4 +41,3 @@ plot(Dates, rowSums(Vols, na.rm=TRUE), type='l')
 
 }
 }
-

@@ -157,9 +157,7 @@ nad83 <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 # }
 
 if (!exists('comcat') | !exists('comcat.cty') | redo | redo.quakes){
-	read_csv("comcat/comcat_catalog.csv", col_names=TRUE) %>%
-		dplyr::rename(., DateTime = `time`) %>%
-		dplyr::mutate(., Date = as.Date(DateTime)) -> comcat
+	read_csv("comcat/comcat_catalog.csv", col_names=TRUE) -> comcat
 	sp::coordinates(comcat) <- ~ longitude + latitude
 	proj4string(comcat) <- nad83
 	
@@ -225,6 +223,6 @@ message("For plotting... see is-oig/Mapping/Oklahoma/map_injection.R")
 
 message("")
 message("!!!\t1) Update description sub-version to  ", strftime(Sys.time(),"%Y%m%d", tz='UTC'))
-message("!!!\t2) Update ANSS and zzz.R.")
+message("!!!\t2) Update COMCAT (rerun this if necessary) and adjust update-time in zzz.R.")
 message("!!!\t3) Rebuild package.")
 message("")

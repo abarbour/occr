@@ -1,3 +1,17 @@
+#
+# Simply run `make refresh` to update comcat,
+# (at some point a new 'chunk' will be required)
+#
+# Previously this required running an online query
+# (details listed below)
+#
+# The following note(s) still apply:
+#
+#	* go back and re-run Dly*.R
+#
+
+#### PREVIOUSLY:
+
 https://earthquake.usgs.gov/earthquakes/search/
 
 extent(OKcounties)
@@ -22,6 +36,3 @@ NOTE:
 	    if they exist (csv output shouldn't need touchups)
 	  * relink to comcat_catalog.csv
 	  * go back and re-run Dly*.R
-
-[ ] Note that now there is a limit, so will
-need to stitch multiple catalogs together (arg...)
