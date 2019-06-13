@@ -135,7 +135,9 @@ if (!exists("All.dly") | redo | redo.raw){
 		Operator.Number = factor(Operator.Number),
 		Operator.Name = factor(Operator.Name),
 		Well.Number = factor(trimws(gsub("^'","", Well.Number)))
-	) %>% arrange(., API, Report.Date) %>% group_by(., API) -> All.dly
+	) %>% 
+	dplyr::arrange(., API, Report.Date) %>% 
+	dplyr::group_by(., API) -> All.dly
 }
 
 redo.quakes <- TRUE
@@ -157,7 +159,8 @@ nad83 <- "+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0"
 # }
 
 if (!exists('comcat') | !exists('comcat.cty') | redo | redo.quakes){
-	read_csv("comcat/comcat_catalog.csv", col_names=TRUE) -> comcat
+	read_csv("comcat/comcat_catalog.csv", col_names=TRUE) %>%
+		dplyr::mutate(horizontalError = as.numeric(horizontalError)) -> comcat
 	sp::coordinates(comcat) <- ~ longitude + latitude
 	proj4string(comcat) <- nad83
 	
@@ -179,8 +182,8 @@ if (!exists("All.wells") | redo | redo.raw | redo.wells){
 	All.dly %>% as.data.frame %>% tbl_df -> Orig.dly
 	Orig.dly %>%
 		dplyr::filter(., !(API %in% bad.coords)) %>%
-		group_by(., API) %>%
-		summarize(.,
+		dplyr::group_by(., API) %>%
+		dplyr::summarize(.,
 			Name = unique.warn(Well.Name),
 			Number = unique.warn(Well.Number),
 			Operator = unique.warn(Operator.Name),
@@ -191,13 +194,15 @@ if (!exists("All.wells") | redo | redo.raw | redo.wells){
 			Max.volume.bbl=max(diff(Volume.BPD), na.rm=TRUE),
 			N = n()) %>%
 		dplyr::arrange(., Total.volume.bbl) -> All.wells
-	sp::coordinates(All.wells) <- ~ Lon + Lat
-	proj4string(All.wells) <- nad83
+	
+	All.wells %>% dplyr::filter(!is.na(Lat) & !is.na(Lon)) -> All.wells.filt
+	sp::coordinates(All.wells.filt) <- ~ Lon + Lat
+	proj4string(All.wells.filt) <- nad83
 }
 
 if (!exists("All.wells.cty") | redo | redo.raw | redo.cty | redo.wells){
-	ovr <- sp::over(All.wells, counties)
-	cbind(as.data.frame(All.wells), ovr) %>%
+	ovr <- sp::over(All.wells.filt, counties)
+	cbind(as.data.frame(All.wells.filt), ovr) %>%
 		dplyr::arrange(., -Total.volume.bbl) -> All.wells.cty
 	sp::coordinates(All.wells.cty) <- ~ Lon + Lat
 	proj4string(All.wells.cty) <- nad83
