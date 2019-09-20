@@ -1,6 +1,20 @@
 #!/bin/sh
 set -e
-FILE=tl_2010_40_county10.zip
+#
+# Download countylevel decennial census tracts
+#
+# code is for FIPS: 40 is OK, 20 is KS
+#
+case $# in
+1)
+FIPS="$1";;
+*)
+echo "input fips; running for OK and KS"
+$0 40
+$0 20; exit;;
+esac
+
+FILE=tl_2010_${FIPS}_county10.zip
 BASE=`basename ${FILE} ".zip"`
 URL=https://www2.census.gov/geo/tiger/TIGER2010/COUNTY/2010/${FILE}
 wget -O ${FILE} ${URL}

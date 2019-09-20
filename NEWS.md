@@ -1,3 +1,7 @@
+# occr 0.3-20190920
+
+* Added shapefile for Kansas
+
 # occr 0.2-20170503
 
 * Added a `NEWS.md` file to track general changes to the package

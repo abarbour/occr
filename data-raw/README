@@ -6,4 +6,7 @@ Injection data:
 	http://www.occeweb.com/og/ogdatafiles2.htm
 
 Counties:
+	40 (FIPS code) is OK
+	20 is KS
 	https://www2.census.gov/geo/tiger/TIGER2010/COUNTY/2010/tl_2010_40_county10.zip
+	https://www2.census.gov/geo/tiger/TIGER2010/COUNTY/2010/tl_2010_20_county10.zip

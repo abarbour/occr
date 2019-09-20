@@ -4,7 +4,8 @@
 \alias{occ_daily_volume}
 \title{Daily volumes by date and API}
 \usage{
-occ_daily_volume(api.filter = NULL, exclude = FALSE, after = NULL, ...)
+occ_daily_volume(api.filter = NULL, exclude = FALSE, after = NULL,
+  ...)
 }
 \arguments{
 \item{api.filter}{character; API numbers to filter}

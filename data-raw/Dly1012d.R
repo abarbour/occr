@@ -110,6 +110,11 @@ if (!exists("counties") | redo.cty){
 	counties$County <- factor(counties$NAME10)
 }
 
+if (!exists("counties_2") | redo.cty){
+	counties_2 <- readOGR("tl_2010_20_county10",layer="tl_2010_20_county10")
+	counties_2$County <- factor(counties_2$NAME10)
+}
+
 #+++++++++++
 
 fix.names <- function(x, is.csv=TRUE){
@@ -221,6 +226,9 @@ save(OKcounties, file='OKcounties.rda')
 
 OKquakes <- comcat.cty #"SpatialPointsDataFrame"
 save(OKquakes, file='OKquakes.rda')
+
+KScounties <- counties_2 #"SpatialPolygonsDataFrame"
+save(KScounties, file='KScounties.rda')
 
 message("For plotting... see is-oig/Mapping/Oklahoma/map_injection.R")
 
